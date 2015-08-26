@@ -127,6 +127,9 @@ public final class DocumentNodeStore
     private static final PerfLogger PERFLOG = new PerfLogger(
             LoggerFactory.getLogger(DocumentNodeStore.class.getName() + ".perf"));
 
+    // TODO remove this once unstable MultiplexingNodeStoreCurrentFailuresTest is fixed
+    private static long sleepHack = Long.getLong("sleepHack.msec",0);
+
     /**
      * Do not cache more than this number of children for a document.
      */
@@ -1499,6 +1502,12 @@ public final class DocumentNodeStore
     @Nonnull
     @Override
     public DocumentNodeState getRoot() {
+        if(sleepHack > 0) { 
+            try {
+                Thread.sleep(sleepHack);
+            } catch(InterruptedException iex) {
+            }
+        }
         return getRoot(headRevision);
     }
 
